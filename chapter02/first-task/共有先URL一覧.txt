@@ -1,0 +1,18 @@
+社内・社外の共有先URL一覧（営業チーム）
+
+■ 営業実績の集計シート（社内のみ）
+https://drive.example.com/sheets/sales-monthly-2026
+
+■ 提案書・見積書のテンプレート置き場（社内のみ）
+https://intranet.example.co.jp/sales/templates/
+
+■ B社案件の共有フォルダ（先方と共有）
+https://drive.example.com/folders/b-project-shared
+
+■ A社 新製品関連資料（先方から共有された閲覧用フォルダ）
+https://drive.example.com/folders/a-newproduct-info
+
+■ 競合情報の共有チャンネル（社内のみ）
+https://chat.example.com/channels/sales-competitor
+
+※B社の共有フォルダは先方の情報システム部も閲覧できる。社外秘資料をアップロードする前に、混在がないか必ず確認すること

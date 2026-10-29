@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>規約レビュー結果 — Nyanta Corporation MSA</title>
+<style>
+  :root {
+    --bg: #f6f7f9;
+    --panel-bg: #ffffff;
+    --text: #1c2126;
+    --text-muted: #5b6570;
+    --border: #dde1e6;
+    --accent: #3457d5;
+    --ok-bg: #e6f4ea;
+    --ok-border: #1a7f37;
+    --ok-text: #146c2e;
+    --warn-bg: #fff6e0;
+    --warn-border: #9a6700;
+    --warn-text: #7a5200;
+    --ng-bg: #fdecec;
+    --ng-border: #cf222e;
+    --ng-text: #a8071a;
+    --target-flash: #fff3b0;
+    --code-bg: #f0f2f5;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #14171c;
+      --panel-bg: #1b1f26;
+      --text: #e6e9ed;
+      --text-muted: #9aa4b0;
+      --border: #2c333d;
+      --accent: #7c9bff;
+      --ok-bg: #123021;
+      --ok-border: #2ea043;
+      --ok-text: #56d364;
+      --warn-bg: #332905;
+      --warn-border: #d4a72c;
+      --warn-text: #e3b341;
+      --ng-bg: #35100f;
+      --ng-border: #e5534b;
+      --ng-text: #ff7b72;
+      --target-flash: #4a3d00;
+      --code-bg: #22272e;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Hiragino Sans", "Yu Gothic", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    line-height: 1.75;
+  }
+  .wrap {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 32px 20px 80px;
+  }
+
+  header.page-header {
+    padding: 28px 32px;
+    background: linear-gradient(135deg, #1f2937, #111827);
+    color: #f3f4f6;
+    border-radius: 14px;
+    margin-bottom: 28px;
+  }
+  header.page-header h1 {
+    margin: 0 0 6px;
+    font-size: 1.5rem;
+  }
+  header.page-header p {
+    margin: 4px 0 0;
+    color: #cbd5e1;
+    font-size: 0.92rem;
+  }
+  .fiction-note {
+    display: inline-block;
+    margin-top: 12px;
+    padding: 6px 12px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 999px;
+    font-size: 0.8rem;
+    color: #fde68a;
+  }
+
+  section.panel {
+    background: var(--panel-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-bottom: 24px;
+  }
+  section.panel h2 {
+    margin-top: 0;
+    font-size: 1.2rem;
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 10px;
+  }
+  section.panel h3.category {
+    font-size: 1.02rem;
+    margin: 28px 0 12px;
+    color: var(--accent);
+  }
+  section.panel h3.category:first-of-type { margin-top: 8px; }
+
+  /* summary counters */
+  .summary-grid {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+  }
+  .summary-card {
+    flex: 1 1 140px;
+    border-radius: 10px;
+    padding: 16px 18px;
+    border: 1px solid var(--border);
+  }
+  .summary-card .num {
+    font-size: 1.9rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+  .summary-card .label {
+    margin-top: 6px;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+  .summary-card.ok { background: var(--ok-bg); border-color: var(--ok-border); }
+  .summary-card.ok .num { color: var(--ok-text); }
+  .summary-card.warn { background: var(--warn-bg); border-color: var(--warn-border); }
+  .summary-card.warn .num { color: var(--warn-text); }
+  .summary-card.ng { background: var(--ng-bg); border-color: var(--ng-border); }
+  .summary-card.ng .num { color: var(--ng-text); }
+
+  /* badges */
+  .badge {
+    display: inline-block;
+    padding: 3px 12px;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    border: 1.5px solid transparent;
+  }
+  .badge-ok { background: var(--ok-bg); color: var(--ok-text); border-color: var(--ok-border); }
+  .badge-warn { background: var(--warn-bg); color: var(--warn-text); border-color: var(--warn-border); }
+  .badge-ng { background: var(--ng-bg); color: var(--ng-text); border-color: var(--ng-border); }
+
+  /* judgment table */
+  table.judgment-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 4px;
+  }
+  table.judgment-table th {
+    text-align: left;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    padding: 8px 10px;
+    border-bottom: 2px solid var(--border);
+    white-space: nowrap;
+  }
+  table.judgment-table td {
+    padding: 12px 10px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    font-size: 0.92rem;
+  }
+  table.judgment-table tr:last-child td { border-bottom: none; }
+  td.col-item { width: 26%; font-weight: 600; }
+  td.col-badge { width: 9%; }
+  td.col-ground { width: 18%; }
+  td.col-explain { width: 47%; color: var(--text); }
+  td.col-explain .quote {
+    display: block;
+    margin-top: 6px;
+    font-size: 0.83rem;
+    color: var(--text-muted);
+    background: var(--code-bg);
+    border-left: 3px solid var(--border);
+    padding: 6px 10px;
+    border-radius: 4px;
+  }
+
+  a.ground-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 0.86rem;
+    font-weight: 600;
+    border: 1px solid var(--accent);
+    padding: 4px 9px;
+    border-radius: 6px;
+    white-space: nowrap;
+  }
+  a.ground-link:hover { background: var(--accent); color: #fff; }
+  a.ground-link.no-clause {
+    color: var(--warn-text);
+    border-color: var(--warn-border);
+  }
+  a.ground-link.no-clause:hover { background: var(--warn-border); color: #1c2126; }
+
+  /* contract clauses */
+  .contract-columns-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    position: sticky;
+    top: 0;
+    background: var(--panel-bg);
+    padding: 10px 0;
+    border-bottom: 2px solid var(--border);
+    margin-bottom: 6px;
+    z-index: 5;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: 0.04em;
+  }
+
+  .clause {
+    border-top: 1px solid var(--border);
+    padding: 20px 0;
+    scroll-margin-top: 14px;
+  }
+  .clause:first-of-type { border-top: none; }
+  .clause:target {
+    background: var(--target-flash);
+    animation: flash-fade 2.4s ease-out forwards;
+    border-radius: 8px;
+    padding: 20px 14px;
+    margin: 0 -14px;
+  }
+  @keyframes flash-fade {
+    0% { background: var(--target-flash); }
+    75% { background: var(--target-flash); }
+    100% { background: transparent; }
+  }
+  .clause-title {
+    font-weight: 700;
+    font-size: 0.98rem;
+    margin-bottom: 10px;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .clause-title .back-link {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-decoration: none;
+    border: 1px solid var(--border);
+    padding: 2px 9px;
+    border-radius: 999px;
+  }
+  .clause-title .back-link:hover { color: var(--accent); border-color: var(--accent); }
+  .clause-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  .clause-en {
+    font-size: 0.86rem;
+    color: var(--text);
+    font-family: Georgia, "Times New Roman", serif;
+    padding-right: 6px;
+    border-right: 1px dashed var(--border);
+  }
+  .clause-ja {
+    font-size: 0.9rem;
+    color: var(--text);
+  }
+  .clause-en strong, .clause-ja strong { color: var(--accent); }
+
+  .note-box {
+    border: 1.5px dashed var(--warn-border);
+    background: var(--warn-bg);
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin: 20px 0;
+    scroll-margin-top: 14px;
+  }
+  .note-box:target {
+    animation: flash-fade 2.4s ease-out forwards;
+  }
+  .note-box .clause-title { color: var(--warn-text); }
+
+  footer.page-footer {
+    margin-top: 30px;
+    padding: 18px 22px;
+    border-radius: 10px;
+    background: var(--code-bg);
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    line-height: 1.6;
+  }
+
+  .toc-jump {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    background: var(--accent);
+    color: #fff;
+    text-decoration: none;
+    padding: 10px 16px;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+    z-index: 10;
+  }
+
+  @media (max-width: 760px) {
+    .clause-columns, .contract-columns-header { grid-template-columns: 1fr; }
+    .clause-en { border-right: none; border-bottom: 1px dashed var(--border); padding-bottom: 10px; margin-bottom: 10px; }
+    td.col-item, td.col-badge, td.col-ground, td.col-explain { width: auto; }
+    table.judgment-table, table.judgment-table thead, table.judgment-table tbody, table.judgment-table tr, table.judgment-table td {
+      display: block;
+      width: 100%;
+    }
+    table.judgment-table thead { display: none; }
+    table.judgment-table tr { border-bottom: 2px solid var(--border); padding-bottom: 8px; margin-bottom: 8px; }
+    table.judgment-table td { border-bottom: none; padding: 4px 0; }
+    td.col-item::before { content: "項目: "; color: var(--text-muted); font-weight: 400; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="page-header">
+    <h1>規約レビュー結果 — Nyanta Corporation Master Subscription Agreement（抜粋）</h1>
+    <p>対象文書: nyanta_corp_terms_excerpt.txt（Last updated: October 15, 2025）／ チェックリスト: our_review_checklist.md</p>
+    <p>当社の利用予定データ: 一般的な業務文書および取引先担当者の連絡先（医療情報・カード情報・輸出規制対象・社内機密指定データは扱わない）</p>
+    <span class="fiction-note">※ 規約本文末尾の記載のとおり、本文書は教育目的の架空サンプルです</span>
+  </header>
+
+  <section class="panel" id="summary">
+    <h2>サマリー</h2>
+    <p>チェックリスト全10項目のうち、規約本文の該当条項を引用して判定した結果は以下のとおり。<strong>要確認・NGの計5項目</strong>は法務への相談材料として下部の判定一覧にまとめている。</p>
+    <div class="summary-grid">
+      <div class="summary-card ok">
+        <div class="num">5</div>
+        <div class="label">OK（受容可能）</div>
+      </div>
+      <div class="summary-card warn">
+        <div class="num">4</div>
+        <div class="label">要確認（人間の判断が必要）</div>
+      </div>
+      <div class="summary-card ng">
+        <div class="num">1</div>
+        <div class="label">NG（方針に明確に反する）</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" id="judgment">
+    <h2>チェックリスト判定一覧</h2>
+
+    <h3 class="category">データの扱い</h3>
+    <table class="judgment-table">
+      <thead><tr><th>チェック項目</th><th>判定</th><th>根拠条項</th><th>解説</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="col-item">当社の入力データの所有権は当社に残るか</td>
+          <td class="col-badge"><span class="badge badge-ok">OK</span></td>
+          <td class="col-ground"><a class="ground-link" href="#sec-3-1">第3.1条 Ownership →</a></td>
+          <td class="col-explain">
+            第3.1条は「Customer retains all right, title, and interest in and to Customer Data」と明記し、Nyanta側は所有権を主張しないとも定めている。所有権が当社に残るというチェック基準を直接満たす。
+          </td>
+        </tr>
+        <tr>
+          <td class="col-item">当社のデータが AI モデルの学習・改善に使われないか</td>
+          <td class="col-badge"><span class="badge badge-ok">OK</span></td>
+          <td class="col-ground"><a class="ground-link" href="#sec-3-2">第3.2条 Use for Model Training →</a></td>
+          <td class="col-explain">
+            第3.2条は「Nyanta shall not use Customer Data to train, fine-tune, or otherwise improve any of its foundation models or fine-tuned variants without Customer's prior written consent」と定めており、当社が事前に書面で同意しない限り学習には使われない。但書で認められる利用テレメトリも「shall not, in any case, contain Customer Data, prompts, completions」とあり、プロンプトや出力は含まれないためOK。
+          </td>
+        </tr>
+        <tr>
+          <td class="col-item">データの保管リージョンを当社が指定できるか</td>
+          <td class="col-badge"><span class="badge badge-ng">NG</span></td>
+          <td class="col-ground"><a class="ground-link" href="#sec-6-3">第6.3条 Data Residency →</a></td>
+          <td class="col-explain">
+            第6.3条は「Nyanta may transfer Customer Data between such regions at any time at its sole discretion, without notice to Customer」「The Nyanta Platform does not currently offer customer-designated storage regions」と明記しており、リージョン指定はできず、移転の通知もない。チェックリストに明記した「指定できないサービスは原則採用しない」方針に明確に反するためNG。
+          </td>
+        </tr>
+        <tr>
+          <td class="col-item">再委託先（サブプロセッサー）の追加・変更時に事前通知があるか</td>
+          <td class="col-badge"><span class="badge badge-warn">要確認</span></td>
+          <td class="col-ground"><a class="ground-link" href="#sec-6-2">第6.2条 Subprocessors →</a></td>
+          <td class="col-explain">
+            第6.2条は「at least thirty (30) days' prior written notice」と30日前の書面通知と異議申立てを定める一方、「Customer's sole remedy shall be to terminate the affected Order Form」とあり、異議が解決しない場合の手段は解約に限られる。この扱いを受け入れられるかの許容条件はチェックリストに書かれていないため要確認。
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 class="category">解約とデータ持ち出し</h3>
+    <table class="judgment-table">
+      <thead><tr><th>チェック項目</th><th>判定</th><th>根拠条項</th><th>解説</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="col-item">解約後にデータをエクスポートできる期間が30日以上あるか</td>
+          <td class="col-badge"><span class="badge badge-ok">OK</span></td>
+          <td class="col-ground"><a class="ground-link" href="#sec-7-3">第7.3条 Effect of Termination →</a></td>
+          <td class="col-explain">
+            第7.3条(c)は「Customer shall have a period of sixty (60) days following termination to export Customer Data」と定めており、60日は基準の30日以上を満たすためOK。
+          </td>
+        </tr>
+        <tr>
+          <td class="col-item">解約後のデータ削除が約束されているか</td>
+          <td class="col-badge"><span class="badge badge-ok">OK</span></td>
+          <td class="col-ground"><a class="ground-link" href="#sec-7-3">第7.3条 Effect of Termination →</a></td>
+          <td class="col-explain">
+            同条は「Nyanta shall delete Customer Data from its systems within an additional thirty (30) days, except to the extent retention is required by applicable law」と削除義務を明記している。法令上の保持義務がある場合の但書は付くが、削除が契約上約束されているためOK。
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 class="category">責任の範囲</h3>
+    <table class="judgment-table">
+      <thead><tr><th>チェック項目</th><th>判定</th><th>根拠条項</th><th>解説</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="col-item">ベンダー側の責任上限額が当社にとって受容可能な水準か</td>
+          <td class="col-badge"><span class="badge badge-warn">要確認</span></td>
+          <td class="col-ground"><a class="ground-link" href="#sec-8-2">第8.2条 Cap on Liability →</a></td>
+          <td class="col-explain">
+            第8.2条は責任上限を「SHALL NOT EXCEED THE FEES PAID OR PAYABLE BY CUSTOMER TO NYANTA DURING THE TWELVE (12) MONTH PERIOD IMMEDIATELY PRECEDING THE EVENT」と定め、冒頭の「EXCEPT FOR BREACHES OF CONFIDENTIALITY OR CUSTOMER'S PAYMENT OBLIGATIONS」により機密保持違反と支払義務違反は上限の対象外としている。この水準を受容できるかの具体的な金額基準はチェックリストに書かれていないため要確認。
+          </td>
+        </tr>
+        <tr>
+          <td class="col-item">第三者からの知財侵害クレームに対するベンダー側の補償義務があるか</td>
+          <td class="col-badge"><span class="badge badge-warn">要確認</span></td>
+          <td class="col-ground"><a class="ground-link no-clause" href="#note-ip-indemnity">該当条項なし（要確認）→</a></td>
+          <td class="col-explain">
+            本抜粋（第1条〜第9条）を通読したが、ベンダーによる第三者知財侵害クレームへの補償（Indemnification）を定める条項が見当たらない。引用できる条項が出せないため、ルールに従い自動的に「要確認」と判定。
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 class="category">法務面</h3>
+    <table class="judgment-table">
+      <thead><tr><th>チェック項目</th><th>判定</th><th>根拠条項</th><th>解説</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="col-item">準拠法と紛争解決の場が当社にとって受容可能か</td>
+          <td class="col-badge"><span class="badge badge-warn">要確認</span></td>
+          <td class="col-ground"><a class="ground-link" href="#sec-9">第9条 Governing Law and Disputes →</a></td>
+          <td class="col-explain">
+            第9条は「governed by and construed in accordance with the laws of the State of Delaware」「binding arbitration administered by JAMS under its Comprehensive Arbitration Rules, with the seat of arbitration in San Francisco, California」と定める（但書により知財・機密情報の差止請求のみ裁判所提訴が可能）。準拠法と仲裁地を受容できるかの条件はチェックリストに書かれていないため要確認。
+          </td>
+        </tr>
+        <tr>
+          <td class="col-item">当社で扱う予定のデータが規約の禁止対象に含まれていないか</td>
+          <td class="col-badge"><span class="badge badge-ok">OK</span></td>
+          <td class="col-ground"><a class="ground-link" href="#sec-3-3">第3.3条 Prohibition on Sensitive Data →</a></td>
+          <td class="col-explain">
+            第3.3条が処理を禁じるのは「protected health information ("PHI")」「cardholder data」「export-controlled technical data」「any data classified by Customer as "highly sensitive" or "restricted"」の4種類。チェックリストに明記された当社の利用予定（一般的な業務文書と取引先担当者の連絡先）はいずれにも該当しないためOK。
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="panel" id="contract">
+    <h2>規約全文（英日対訳）</h2>
+    <p style="color:var(--text-muted); font-size:0.85rem; margin-top:-6px;">上の判定一覧の「根拠条項」リンクをクリックすると、該当箇所へジャンプします。ジャンプ先は一時的にハイライト表示されます。</p>
+    <div class="contract-columns-header">
+      <div>ENGLISH（原文）</div>
+      <div>日本語訳</div>
+    </div>
+
+    <div class="clause" id="preamble">
+      <div class="clause-title">前文</div>
+      <div class="clause-columns">
+        <div class="clause-en">This Master Subscription Agreement ("Agreement") is entered into between Nyanta Corporation, a Delaware corporation with its principal offices at 100 Example Avenue, San Francisco, California ("Nyanta," "we," or "us"), and the entity identified in the applicable Order Form ("Customer," "you," or "your"). By executing an Order Form, accessing the Nyanta Platform, or clicking "I accept," Customer agrees to be bound by the terms set forth herein. If you are accepting this Agreement on behalf of an organization, you represent that you have the authority to bind such organization.</div>
+        <div class="clause-ja">本マスターサブスクリプション契約（以下「本契約」）は、カリフォルニア州サンフランシスコのオフィスに本社を置くデラウェア州法人であるNyanta Corporation（以下「Nyanta」）と、該当する注文書に記載される事業体（以下「顧客」「お客様」）との間で締結される。注文書への署名、Nyantaプラットフォームへのアクセス、または「同意する」ボタンのクリックのいずれかにより、顧客は本契約の条件に拘束されることに同意したものとする。組織を代表して本契約に同意する場合、当該組織を拘束する権限を有することを表明するものとする。</div>
+      </div>
+    </div>
+
+    <div class="clause" id="sec-1">
+      <div class="clause-title">1. DEFINITIONS（定義） <a class="back-link" href="#judgment">▲ 判定一覧に戻る</a></div>
+      <div class="clause-columns">
+        <div class="clause-en">"Customer Data" means any data, content, files, prompts, or other materials submitted by Customer or its Authorized Users to the Nyanta Platform, including any outputs generated in response thereto. "Nyanta Platform" means the Nyanta AI workspace assistant, including all associated APIs, software development kits, and ancillary services made generally available by Nyanta. "Authorized User" means an employee or contractor of Customer who has been provisioned a seat under the applicable Order Form. "Order Form" means an ordering document executed by the parties that specifies the services purchased, the number of Authorized User seats, the applicable fees, and the Initial Subscription Term. "Subprocessor" means any third party engaged by Nyanta to process Customer Data on Nyanta's behalf in connection with the provision of the Services.</div>
+        <div class="clause-ja">「カスタマーデータ」とは、顧客またはその認定ユーザーがNyantaプラットフォームに送信するデータ、コンテンツ、ファイル、プロンプトその他の資料、およびそれに応じて生成される出力を含む一切のものをいう。「Nyantaプラットフォーム」とは、関連するAPI、ソフトウェア開発キット、およびNyantaが一般提供する付随サービスを含む、Nyantaのワークスペースアシスタントをいう。「認定ユーザー」とは、該当する注文書に基づきシートを付与された顧客の従業員または契約者をいう。「注文書」とは、購入するサービス、認定ユーザーのシート数、適用される料金、および初期サブスクリプション期間を定める、両当事者が締結する発注文書をいう。「サブプロセッサー」とは、本サービス提供に関連してNyantaに代わってカスタマーデータを処理するためにNyantaが関与させる第三者をいう。</div>
+      </div>
+    </div>
+
+    <div class="clause" id="sec-2-1">
+      <div class="clause-title">2.1 Provision of the Platform（プラットフォームの提供）</div>
+      <div class="clause-columns">
+        <div class="clause-en">Subject to Customer's payment of all applicable fees and continued compliance with this Agreement, Nyanta hereby grants Customer a non-exclusive, non-transferable, worldwide right during the Subscription Term to access and use the Nyanta Platform solely for Customer's internal business purposes.</div>
+        <div class="clause-ja">顧客が適用される料金を支払い、本契約を継続して遵守することを条件として、Nyantaは、顧客の内部業務目的のためにのみ、サブスクリプション期間中にNyantaプラットフォームへアクセスし使用する非独占的、譲渡不能、世界的な権利を顧客に付与する。</div>
+      </div>
+    </div>
+
+    <div class="clause" id="sec-2-2">
+      <div class="clause-title">2.2 Beta Features（ベータ機能）</div>
+      <div class="clause-columns">
+        <div class="clause-en">Nyanta may from time to time make available certain features designated as "Beta," "Preview," or "Experimental." Such features are provided "AS IS" and without any service level commitments, and Nyanta reserves the right to modify, suspend, or discontinue any Beta Feature at any time without prior notice. Customer's use of Beta Features is at Customer's sole risk.</div>
+        <div class="clause-ja">Nyantaは随時、「ベータ」「プレビュー」または「実験的」と指定される機能を提供することがある。かかる機能は現状有姿（AS IS）で提供され、いかなるサービスレベルの確約も伴わない。Nyantaはベータ機能をいつでも事前通知なく変更、停止、または終了する権利を留保する。顧客によるベータ機能の使用は顧客自身のリスクにおいて行われる。</div>
+      </div>
+    </div>
+
+    <div class="clause" id="sec-3-1">
+      <div class="clause-title">3.1 Ownership（所有権） <a class="back-link" href="#judgment">▲ 判定一覧に戻る</a></div>
+      <div class="clause-columns">
+        <div class="clause-en">As between the parties, Customer retains all right, title, and interest in and to Customer Data. Nyanta claims no ownership interest in Customer Data and shall use Customer Data solely as necessary to provide the Services and to comply with applicable law.</div>
+        <div class="clause-ja">両当事者間において、顧客はカスタマーデータに関するすべての権利、権原、利益を保持する。Nyantaはカスタマーデータについて所有権を主張せず、本サービスの提供および適用法の遵守のために必要な範囲でのみカスタマーデータを使用するものとする。</div>
+      </div>
+    </div>
+
+    <div class="clause" id="sec-3-2">
+      <div class="clause-title">3.2 Use for Model Training（モデル学習への利用） <a class="back-link" href="#judgment">▲ 判定一覧に戻る</a></div>
+      <div class="clause-columns">
+        <div class="clause-en">Nyanta shall not use Customer Data to train, fine-tune, or otherwise improve any of its foundation models or fine-tuned variants without Customer's prior written consent. Notwithstanding the foregoing, Nyanta may collect and use aggregated, de-identified usage telemetry, including feature usage counts, latency measurements, and error frequencies, for the purposes of operating, securing, and improving the Nyanta Platform. Such telemetry shall not, in any case, contain Customer Data, prompts, completions, or any data from which Customer or any individual could reasonably be identified.</div>
+        <div class="clause-ja">Nyantaは、顧客の事前の書面による同意なしに、カスタマーデータを自社の基盤モデルまたはそのファインチューニング版の学習、ファインチューニング、その他の改善のために使用してはならない。これに関わらずNyantaは、Nyantaプラットフォームの運用、保護、改善を目的として、機能利用回数、レイテンシ測定値、エラー発生頻度を含む、集計され匿名化された利用テレメトリを収集し使用することができる。かかるテレメトリには、いかなる場合もカスタマーデータ、プロンプト、完了結果、または顧客もしくは個人を合理的に特定しうるデータを含んではならない。</div>
+      </div>
+    </div>
+
+    <div class="clause" id="sec-3-3">
+      <div class="clause-title">3.3 Prohibition on Sensitive Data（機微データの取扱禁止） <a class="back-link" href="#judgment">▲ 判定一覧に戻る</a></div>
+      <div class="clause-columns">
+        <div class="clause-en">Customer acknowledges that the Nyanta Platform is not designed for, and shall not be used to process, (i) protected health information ("PHI") within the meaning of the Health Insurance Portability and Accountability Act of 1996, (ii) cardholder data subject to the Payment Card Industry Data Security Standard, (iii) export-controlled technical data subject to the U.S. International Traffic in Arms Regulations or the Export Administration Regulations, or (iv) any data classified by Customer as "highly sensitive" or "restricted" under Customer's internal data classification policy, unless and until the parties have executed a separate addendum specifically authorizing such processing. Customer is solely responsible for any consequences arising from its violation of this Section 3.3.</div>
+        <div class="clause-ja">顧客は、Nyantaプラットフォームが(i) 1996年医療保険の携行性と責任に関する法律（HIPAA）の意味における保護対象保健情報（PHI）、(ii) Payment Card Industry Data Security Standardの対象となるカード会員データ、(iii) 米国国際武器取引規則または輸出管理規則の対象となる輸出管理対象技術データ、または(iv) 顧客の社内データ分類方針において「高度機密」または「制限」に分類されるデータ、の処理のために設計されておらず、両当事者が当該処理を特別に認める別途の付属書を締結しない限り、これらの処理に使用してはならないことを了承する。顧客は、本第3.3条の違反から生じるいかなる結果についても単独で責任を負うものとする。</div>
+      </div>
+    </div>
+
+    <div class="clause" id="sec-3-4">
+      <div class="clause-title">3.4 Output Accuracy（出力の正確性）</div>
+      <div class="clause-columns">
+        <div class="clause-en">Customer acknowledges that the Nyanta Platform employs probabilistic machine learning models, and that outputs generated by such models may be inaccurate, incomplete, or otherwise unsuitable for Customer's intended purpose. Nyanta makes no warranty as to the factual correctness, completeness, or fitness for any particular purpose of any output, and Customer is solely responsible for reviewing, validating, and exercising independent professional judgment with respect to any output before relying upon it.</div>
+        <div class="clause-ja">顧客は、Nyantaプラットフォームが確率的機械学習モデルを採用しており、当該モデルによって生成される出力が不正確、不完全、または顧客の意図する目的に適さない場合があることを了承する。Nyantaは、いかなる出力についても、その事実的正確性、完全性、または特定目的への適合性について一切の保証をせず、顧客は当該出力に依拠する前に、独自の専門的判断をもってこれを確認・検証する責任を単独で負う。</div>
+      </div>
+    </div>
+
+    <div class="clause" id="sec-4">
+      <div class="clause-title">4. ACCEPTABLE USE（許容される利用）</div>
+      <div class="clause-columns">
+        <div class="clause-en">Customer shall not, and shall not permit any Authorized User or third party to: (a) use the Services in any manner that violates applicable law or regulation, including export control, sanctions, anti-discrimination, and consumer protection laws; (b) generate or disseminate content that is unlawful, defamatory, harassing, or that infringes the intellectual property or privacy rights of any third party; (c) attempt to reverse engineer, decompile, or otherwise derive the source code, model weights, or training data of the Nyanta Platform; (d) use the Services to develop, train, or improve any competing artificial intelligence product or service; or (e) circumvent any access controls, rate limits, or content safety mechanisms implemented by Nyanta. Nyanta reserves the right to suspend Customer's access to the Services upon reasonable notice if Nyanta believes, in its good-faith judgment, that continued access poses a material risk to the integrity of the Nyanta Platform or to other Nyanta customers.</div>
+        <div class="clause-ja">顧客は、認定ユーザーまたは第三者に対しても、次の行為をさせてはならない。(a) 輸出管理、制裁、差別禁止、消費者保護に関する法律を含む適用法または規制に違反する方法で本サービスを使用すること、(b) 違法、名誉毀損、嫌がらせに当たる、または第三者の知的財産権もしくはプライバシー権を侵害するコンテンツを生成または配布すること、(c) Nyantaプラットフォームのソースコード、モデルの重み、または学習データをリバースエンジニアリング、逆コンパイル、またはその他の方法で導出しようとすること、(d) 競合するAI製品またはサービスの開発、学習、改善のために本サービスを使用すること、または(e) Nyantaが実装するアクセス制御、レート制限、コンテンツ安全機構を回避すること。Nyantaは、継続的なアクセスがNyantaプラットフォームの完全性または他のNyanta顧客に重大なリスクをもたらすと誠実に判断した場合、合理的な通知の上で顧客のサービスへのアクセスを停止する権利を留保する。</div>
+      </div>
+    </div>
+
+    <div class="clause" id="sec-5-1">
+      <div class="clause-title">5.1 Uptime Commitment（稼働率保証）</div>
+      <div class="clause-columns">
+        <div class="clause-en">Nyanta shall use commercially reasonable efforts to make the Nyanta Platform available with a Monthly Uptime Percentage of at least 99.5%, excluding (i) scheduled maintenance announced at least seventy-two (72) hours in advance, (ii) emergency maintenance required to address security vulnerabilities, and (iii) any unavailability caused by factors outside Nyanta's reasonable control, including any force majeure event or failure of Customer's internet connectivity.</div>
+        <div class="clause-ja">Nyantaは、(i) 少なくとも72時間前に告知された予定メンテナンス、(ii) セキュリティ脆弱性への対応に必要な緊急メンテナンス、および(iii) 不可抗力事象や顧客のインターネット接続の不具合を含む、Nyantaの合理的な支配を超える要因による利用不能を除き、月間稼働率99.5%以上でNyantaプラットフォームを利用可能にするよう商業的に合理的な努力を尽くすものとする。</div>
+      </div>
+    </div>
+
+    <div class="clause" id="sec-5-2">
+      <div class="clause-title">5.2 Service Credits（サービスクレジット）</div>
+      <div class="clause-columns">
+        <div class="clause-en">In the event Nyanta fails to meet the Uptime Commitment in any given calendar month, Customer's sole and exclusive remedy shall be a service credit applied against the next monthly invoice, calculated as follows: (i) ten percent (10%) of the affected month's subscription fee where the Monthly Uptime Percentage is less than 99.5% but at least 99.0%; (ii) twenty-five percent (25%) where the Monthly Uptime Percentage is less than 99.0% but at least 95.0%; and (iii) fifty percent (50%) where the Monthly Uptime Percentage is less than 95.0%. Service credits must be requested in writing within thirty (30) days of the affected month and shall not be refunded as cash.</div>
+        <div class="clause-ja">Nyantaがいずれかの暦月において稼働率保証を満たせなかった場合、顧客の唯一かつ排他的な救済手段は、翌月の請求書に適用されるサービスクレジットであり、次のとおり計算される。(i) 月間稼働率が99.5%未満99.0%以上の場合、当該月のサブスクリプション料金の10%、(ii) 99.0%未満95.0%以上の場合、25%、(iii) 95.0%未満の場合、50%。サービスクレジットは、対象月から30日以内に書面で請求される必要があり、現金として返金されることはない。</div>
+      </div>
+    </div>
+
+    <div class="clause" id="sec-6-1">
+      <div class="clause-title">6.1 Confidentiality（秘密保持）</div>
+      <div class="clause-columns">
+        <div class="clause-en">Each party shall hold in strict confidence all non-public information disclosed by the other party that is marked as confidential or that a reasonable person would understand to be confidential under the circumstances. Customer Data shall be deemed Customer's Confidential Information.</div>
+        <div class="clause-ja">各当事者は、相手方が開示する非公開情報のうち、機密である旨の表示がなされたもの、または状況に照らして合理的な者が機密であると理解するものを厳格に秘密として保持するものとする。カスタマーデータは顧客の機密情報とみなされる。</div>
+      </div>
+    </div>
+
+    <div class="clause" id="sec-6-2">
+      <div class="clause-title">6.2 Subprocessors（サブプロセッサー） <a class="back-link" href="#judgment">▲ 判定一覧に戻る</a></div>
+      <div class="clause-columns">
+        <div class="clause-en">Nyanta may engage Subprocessors to process Customer Data in connection with the Services. A current list of Nyanta's Subprocessors, including the name, location, and processing activity of each, is maintained at nyanta.example.com/subprocessors. Nyanta shall provide Customer with at least thirty (30) days' prior written notice of any addition or replacement of a Subprocessor, during which period Customer may object on reasonable grounds. If the parties are unable to resolve the objection in good faith, Customer's sole remedy shall be to terminate the affected Order Form, in which case Nyanta shall refund any prepaid fees attributable to the unused portion of the then-current Subscription Term.</div>
+        <div class="clause-ja">Nyantaは、本サービスに関連してカスタマーデータを処理するためにサブプロセッサーを起用することができる。Nyantaのサブプロセッサーの現行リスト（名称、所在地、処理業務を含む）はnyanta.example.com/subprocessorsにて維持される。Nyantaはサブプロセッサーの追加または交代について、少なくとも30日前に顧客へ書面で事前通知するものとし、その期間中、顧客は合理的な根拠に基づき異議を述べることができる。両当事者が誠実な協議によっても異議を解決できない場合、顧客の唯一の救済手段は該当する注文書を解約することであり、その場合Nyantaは現行のサブスクリプション期間のうち未使用分の前払い料金を返金するものとする。</div>
+      </div>
+    </div>
+
+    <div class="clause" id="sec-6-3">
+      <div class="clause-title">6.3 Data Residency（データの保管場所） <a class="back-link" href="#judgment">▲ 判定一覧に戻る</a></div>
+      <div class="clause-columns">
+        <div class="clause-en">Customer Data may be processed and stored in any data center region in which Nyanta or its Subprocessors maintain facilities, and Nyanta may transfer Customer Data between such regions at any time at its sole discretion, without notice to Customer. The Nyanta Platform does not currently offer customer-designated storage regions.</div>
+        <div class="clause-ja">カスタマーデータは、Nyantaまたはそのサブプロセッサーが施設を有するいずれのデータセンターリージョンにおいても処理・保管されることがあり、Nyantaは自らの単独の裁量により、顧客への通知なく、いつでもカスタマーデータをリージョン間で移転することができる。Nyantaプラットフォームは現時点で顧客指定の保管リージョンを提供していない。</div>
+      </div>
+    </div>
+
+    <div class="clause" id="sec-7-1">
+      <div class="clause-title">7.1 Term（契約期間）</div>
+      <div class="clause-columns">
+        <div class="clause-en">This Agreement shall commence on the Effective Date and shall continue for the Initial Subscription Term specified in the Order Form. Thereafter, the Agreement shall automatically renew for successive periods of equal duration unless either party provides written notice of non-renewal at least sixty (60) days prior to the end of the then-current term.</div>
+        <div class="clause-ja">本契約は効力発生日に開始し、注文書に定める初期サブスクリプション期間中継続する。その後、いずれかの当事者が当該期間満了の少なくとも60日前までに更新しない旨の書面通知を行わない限り、本契約は同一期間で自動更新される。</div>
+      </div>
+    </div>
+
+    <div class="clause" id="sec-7-2">
+      <div class="clause-title">7.2 Termination for Cause（解除事由による解約）</div>
+      <div class="clause-columns">
+        <div class="clause-en">Either party may terminate this Agreement upon thirty (30) days' written notice if the other party commits a material breach and fails to cure such breach within the notice period. Nyanta may, in addition, terminate immediately upon written notice in the event of Customer's non-payment that remains outstanding for more than fifteen (15) days following written demand.</div>
+        <div class="clause-ja">いずれの当事者も、相手方が重大な違反を犯し、通知期間内に是正しなかった場合、30日前の書面通知をもって本契約を解約することができる。さらにNyantaは、顧客の支払遅延が書面による督促後15日を超えて継続する場合、書面通知をもって直ちに解約することができる。</div>
+      </div>
+    </div>
+
+    <div class="clause" id="sec-7-3">
+      <div class="clause-title">7.3 Effect of Termination（解約の効果） <a class="back-link" href="#judgment">▲ 判定一覧に戻る</a></div>
+      <div class="clause-columns">
+        <div class="clause-en">Upon termination or expiration of this Agreement, (a) all licenses granted hereunder shall immediately cease, (b) Customer shall pay any fees accrued through the effective date of termination, and (c) Customer shall have a period of sixty (60) days following termination to export Customer Data in a commercially reasonable format. Following such sixty (60) day export window, Nyanta shall delete Customer Data from its systems within an additional thirty (30) days, except to the extent retention is required by applicable law.</div>
+        <div class="clause-ja">本契約の解約または満了時、(a) 本契約に基づき付与された全てのライセンスは直ちに終了し、(b) 顧客は解約の効力発生日までに発生した料金を支払うものとし、(c) 顧客は解約後60日間、商業的に合理的な形式でカスタマーデータをエクスポートすることができる。当該60日間のエクスポート期間経過後、Nyantaは適用法により保持が求められる場合を除き、さらに30日以内にそのシステムからカスタマーデータを削除するものとする。</div>
+      </div>
+    </div>
+
+    <div class="clause" id="sec-8-1">
+      <div class="clause-title">8.1 Disclaimer（保証の否認）</div>
+      <div class="clause-columns">
+        <div class="clause-en">EXCEPT AS EXPRESSLY SET FORTH IN THIS AGREEMENT, THE NYANTA PLATFORM IS PROVIDED "AS IS" AND NYANTA DISCLAIMS ALL WARRANTIES, EXPRESS OR IMPLIED, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.</div>
+        <div class="clause-ja">本契約に明示的に定める場合を除き、Nyantaプラットフォームは現状有姿（AS IS）で提供され、Nyantaは商品性および特定目的適合性の黙示の保証を含む、明示または黙示のあらゆる保証を否認する。</div>
+      </div>
+    </div>
+
+    <div class="clause" id="sec-8-2">
+      <div class="clause-title">8.2 Cap on Liability（責任上限額） <a class="back-link" href="#judgment">▲ 判定一覧に戻る</a></div>
+      <div class="clause-columns">
+        <div class="clause-en">EXCEPT FOR BREACHES OF CONFIDENTIALITY OR CUSTOMER'S PAYMENT OBLIGATIONS, THE TOTAL CUMULATIVE LIABILITY OF EITHER PARTY ARISING OUT OF OR RELATING TO THIS AGREEMENT SHALL NOT EXCEED THE FEES PAID OR PAYABLE BY CUSTOMER TO NYANTA DURING THE TWELVE (12) MONTH PERIOD IMMEDIATELY PRECEDING THE EVENT GIVING RISE TO LIABILITY.</div>
+        <div class="clause-ja">機密保持義務違反または顧客の支払義務違反の場合を除き、本契約に起因または関連するいずれかの当事者の累積責任総額は、責任発生原因となる事象の直前12か月間に顧客がNyantaに対して支払った、または支払うべき料金を上限とする。</div>
+      </div>
+    </div>
+
+    <div class="clause" id="sec-8-3">
+      <div class="clause-title">8.3 Exclusion of Damages（損害の除外）</div>
+      <div class="clause-columns">
+        <div class="clause-en">IN NO EVENT SHALL EITHER PARTY BE LIABLE FOR ANY INDIRECT, INCIDENTAL, CONSEQUENTIAL, SPECIAL, OR PUNITIVE DAMAGES, INCLUDING ANY LOSS OF PROFITS, REVENUE, GOODWILL, OR ANTICIPATED SAVINGS, WHETHER IN CONTRACT, TORT, OR OTHERWISE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.</div>
+        <div class="clause-ja">いかなる場合においても、いずれの当事者も、契約、不法行為、その他いかなる根拠であっても、利益、収益、のれん、または見込まれた節約の損失を含む、間接的、付随的、結果的、特別、または懲罰的損害について、たとえその可能性を助言されていたとしても、責任を負わないものとする。</div>
+      </div>
+    </div>
+
+    <div class="note-box" id="note-ip-indemnity">
+      <div class="clause-title">第三者知的財産権侵害への補償（Indemnification）について <a class="back-link" href="#judgment">▲ 判定一覧に戻る</a></div>
+      <p style="margin:0; font-size:0.9rem;">
+        第1条から第9条まで本抜粋の全文を確認したが、ベンダー（Nyanta）が第三者からの知的財産権侵害クレームについて顧客を補償する旨を定めた条項（Indemnification条項）は見当たらない。第4条(b)・第4条(c)は顧客側の第三者知財侵害・リバースエンジニアリング禁止義務を定めるのみで、ベンダー側の補償義務には触れていない。引用できる条項が存在しないため、指示のルールに従い本項目は自動的に「要確認」と判定する。
+      </p>
+    </div>
+
+    <div class="clause" id="sec-9">
+      <div class="clause-title">9. GOVERNING LAW AND DISPUTES（準拠法および紛争解決） <a class="back-link" href="#judgment">▲ 判定一覧に戻る</a></div>
+      <div class="clause-columns">
+        <div class="clause-en">This Agreement shall be governed by and construed in accordance with the laws of the State of Delaware, without regard to its conflict of laws principles. Any dispute arising out of or relating to this Agreement shall be resolved by binding arbitration administered by JAMS under its Comprehensive Arbitration Rules, with the seat of arbitration in San Francisco, California. Notwithstanding the foregoing, either party may seek injunctive relief in any court of competent jurisdiction to protect its intellectual property or confidential information.</div>
+        <div class="clause-ja">本契約は、その抵触法の原則にかかわらず、デラウェア州法に準拠し、これに従って解釈される。本契約に起因または関連する紛争は、JAMSの総合仲裁規則に基づき、カリフォルニア州サンフランシスコを仲裁地とする拘束力のある仲裁により解決される。ただし、いずれの当事者も、自らの知的財産または機密情報を保護するために、管轄権を有するいずれかの裁判所において差止命令による救済を求めることができる。</div>
+      </div>
+    </div>
+
+  </section>
+
+  <footer class="page-footer">
+    NOTICE: This document is a fictional sample drafted for educational purposes only. "Nyanta Corporation" is not a real entity, and nothing in this excerpt should be construed as legal advice or as the terms of any actual service.<br>
+    本レビュー結果は nyanta_corp_terms_excerpt.txt と our_review_checklist.md の2ファイルのみを読み込んで作成した機械的な一次チェックであり、法的助言ではない。要確認・NGと判定された項目（サブプロセッサー通知、責任上限額、第三者知財補償、準拠法・紛争解決、データ保管リージョン）は法務への相談材料とすること。
+  </footer>
+
+</div>
+
+<a class="toc-jump" href="#judgment">▲ 判定一覧へ</a>
+
+</body>
+</html>
